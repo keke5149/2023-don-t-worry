@@ -23,6 +23,7 @@ public class MainController {
 
     private final MainService mainService;
 
+    //추천 금액도 같이 보..내야 함. .. 추천금액+예측금액 같이...뻥이겠지
     @GetMapping(value = "/api/v1/main")
     public ResponseEntity<?> home(){
         if (SecurityContextHolder.getContext().getAuthentication() instanceof OAuth2AuthenticationToken) {

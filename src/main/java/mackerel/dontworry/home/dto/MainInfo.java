@@ -1,6 +1,5 @@
 package mackerel.dontworry.home.dto;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,4 +11,5 @@ public class MainInfo {
 
     private List<ScheduleInfo> schedules;
     private List<InexInfo> inexs;
+    private Double currentBudgetUsagePercent;
 }

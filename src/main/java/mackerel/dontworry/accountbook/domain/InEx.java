@@ -1,5 +1,5 @@
 package mackerel.dontworry.accountbook.domain;
 
 public enum InEx {
-    INCOME, EXPENSE
+    INCOME, EXPENSE, 저축
 }

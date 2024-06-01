@@ -3,6 +3,7 @@ package mackerel.dontworry.home.service;
 import lombok.RequiredArgsConstructor;
 import mackerel.dontworry.accountbook.domain.AccountBook;
 import mackerel.dontworry.accountbook.repository.AccountBookRepository;
+import mackerel.dontworry.global.service.CommonService;
 import mackerel.dontworry.home.dto.InexInfo;
 import mackerel.dontworry.home.dto.MainInfo;
 import mackerel.dontworry.home.dto.ScheduleInfo;
@@ -26,7 +27,7 @@ public class MainService {
     private final ScheduleRepository scheduleRepository;
     private final AccountBookRepository accountBookRepository;
 
-
+    private final CommonService commonService;
     /**
      * 메인 화면
      * 유저 일정, 가계부 조회
@@ -43,6 +44,9 @@ public class MainService {
         MainInfo result = new MainInfo();
         List<ScheduleInfo> scheduleInfos = new ArrayList<>();
         List<InexInfo> inexInfos = new ArrayList<>();
+
+        Double currentBudgetUsagePercent = commonService.readCurrentBudgetUsage(user) * 100;
+
         List<Schedule> schedules = scheduleRepository.findAllByUser(user);
         List<AccountBook> accountBooks = accountBookRepository.findAllByUser(user);
 
@@ -52,12 +56,15 @@ public class MainService {
                 scheduleInfos.add(info);
             }
         }
-        if (!inexInfos.isEmpty()) {
+        if (!accountBooks.isEmpty()) {
             for (AccountBook account : accountBooks) {
+                System.out.println(account.getAccountId());
                 InexInfo info = new InexInfo(account.getAccountId(), account.getCategory(), account.getInex(), account.getTitle(), account.getCost());
                 inexInfos.add(info);
             }
         }
+
+        result.setCurrentBudgetUsagePercent(currentBudgetUsagePercent);
         result.setSchedules(scheduleInfos);
         result.setInexs(inexInfos);
         return result;

@@ -3,10 +3,14 @@ package mackerel.dontworry.user.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import mackerel.dontworry.accountbook.domain.AccountBook;
+import mackerel.dontworry.budgetguide.domain.FixedEX;
+import mackerel.dontworry.challenge.domain.Challenge;
 import mackerel.dontworry.schedule.domain.Schedule;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -33,11 +37,26 @@ public class User {
 
     private boolean activated;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Schedule> scheduleList = new ArrayList<>();
+    @OneToOne(mappedBy = "user")
+    private FixedEX fixedEx;
+
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+//    private List<Schedule> scheduleList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<AccountBook> accountList = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "FRIENDSHIP",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
+    private Set<User> friends = new HashSet<>();
+
+    @ManyToMany(mappedBy = "participants")
+    private Set<Challenge> challenges = new HashSet<>();
+
 
     @Builder(access = AccessLevel.PRIVATE)
     private User(String name, String email, String provider, String providerId){

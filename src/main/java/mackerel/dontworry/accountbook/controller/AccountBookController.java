@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import mackerel.dontworry.accountbook.dto.ABRequestDTO;
 import mackerel.dontworry.accountbook.dto.ABUpdateRequestDTO;
 import mackerel.dontworry.accountbook.service.AccountBookService;
-import mackerel.dontworry.budgetguide.dto.EveryPercentRequestDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +19,7 @@ public class AccountBookController {
 
     @PostMapping("")
     public ResponseEntity<?> createAccountRecord(@RequestBody ABRequestDTO requestDTO) throws Exception{
+        System.out.println("들어오니?");
         if (SecurityContextHolder.getContext().getAuthentication() instanceof OAuth2AuthenticationToken) {
             OAuth2AuthenticationToken authentication = (OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
             String email = authentication.getPrincipal().getAttributes().get("email").toString();

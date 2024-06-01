@@ -12,9 +12,9 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @Table(name = "BUDGET")
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Budget {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="budget_id")
@@ -25,6 +25,13 @@ public class Budget {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User user;
-    private Long budget;
+
+    private int budget;
+
+    public Budget(LocalDate budgetDate, User user, int budget) {
+        this.budgetDate = budgetDate;
+        this.user = user;
+        this.budget = budget;
+    }
 
 }

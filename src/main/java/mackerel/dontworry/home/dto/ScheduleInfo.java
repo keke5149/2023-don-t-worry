@@ -19,4 +19,6 @@ public class ScheduleInfo {
     private Long expense;
     private LocalDate scheduleDate;
 
+    //예측값
+    //추천값
 }

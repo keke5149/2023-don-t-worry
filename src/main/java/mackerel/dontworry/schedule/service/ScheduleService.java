@@ -30,7 +30,6 @@ public class ScheduleService {
      */
     @Transactional
     public ResponseEntity<?> createSchedule(ScheduleRequestDTO requestDTO) {
-
         User user = userRepository.findByEmail(requestDTO.getUsername())
                 .orElseThrow(() -> new NotFoundMemberException("사용자를 찾을 수 없습니다: " + requestDTO.getUsername()));
 
@@ -38,7 +37,6 @@ public class ScheduleService {
         schedule.setUser(user);
         schedule.setIncome(0L);
         schedule.setExpense(0L);
-
         scheduleRepository.save(schedule);
         return ResponseEntity.status(201).body(schedule);
     }

@@ -41,7 +41,7 @@ public class AccountBookService {
     @Transactional
     public ResponseEntity<?> createAccountRecord(ABRequestDTO requestDTO) {
         AccountBook accountBook = requestDTO.toEntity();
-
+        System.out.println(accountBook);
         User user = userRepository.findByEmail(requestDTO.getUsername())
                 .orElseThrow(() -> new NotFoundMemberException("사용자를 찾을 수 없습니다: " + requestDTO.getUsername()));
         accountBook.setUser(user);
@@ -51,6 +51,9 @@ public class AccountBookService {
                     .orElseThrow(() -> new NotFoundContentException("일정을 찾을 수 없습니다: " + requestDTO.getSchedule()));
             accountBook.setSchedule(schedule);
         }
+        //account_id를 위한 저장
+        accountBook = accountBookRepository.save(accountBook);
+
 
         if(requestDTO.isRepeatFlag()){
             LocalDate current = LocalDate.now();
@@ -72,10 +75,11 @@ public class AccountBookService {
             repeat.setAccountBook(accountBook);
             repeat.setRepeatDate(current);
             repeatRepository.save(repeat);
-
             accountBook.setRepeat(repeat);
+        }else {
+            // 반복 여부를 선택하지 않은 경우 Repeat 엔티티를 생성하지 않고 null로 설정
+            accountBook.setRepeat(null);
         }
-        accountBookRepository.save(accountBook);
         return ResponseEntity.status(201).body(accountBook);
     }
 

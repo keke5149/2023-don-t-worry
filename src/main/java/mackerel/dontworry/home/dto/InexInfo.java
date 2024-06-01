@@ -3,7 +3,6 @@ package mackerel.dontworry.home.dto;
 import lombok.*;
 import mackerel.dontworry.accountbook.domain.AccountCategory;
 import mackerel.dontworry.accountbook.domain.InEx;
-import mackerel.dontworry.accountbook.domain.MoneyType;
 
 @Getter
 @Setter

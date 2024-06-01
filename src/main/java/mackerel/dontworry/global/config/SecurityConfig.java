@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers("/","/oauth2/**", "/css/**", "/images/**",
                                 "/js/**").permitAll() // 로그인은 누구나 가능
-                        .requestMatchers("/api/v1/**").hasRole(UserRole.USER.name()) // USER만
+                        .requestMatchers("/api/v1/**").hasAuthority("ROLE_USER") // USER만
                         .anyRequest().authenticated()
                 )
 
@@ -39,7 +39,8 @@ public class SecurityConfig {
                 //oAuthService - OAuth 2.0 인증이 처리되는데 사용될 사용자 서비스
                 .oauth2Login(oauth2Login ->
                     oauth2Login.userInfoEndpoint(userInfoEndpointConfig ->
-                            userInfoEndpointConfig.userService(oAuthService)))
+                            userInfoEndpointConfig.userService(oAuthService))
+                            .defaultSuccessUrl("/api/v1/main", true))
         ;
 
         return http.build();

@@ -19,7 +19,7 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
-    @PostMapping("")
+    @PostMapping(value = "")
     public ResponseEntity<?> createSchedule(@RequestBody ScheduleRequestDTO requestDTO) throws Exception{
         if (SecurityContextHolder.getContext().getAuthentication() instanceof OAuth2AuthenticationToken) {
             OAuth2AuthenticationToken authentication = (OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();

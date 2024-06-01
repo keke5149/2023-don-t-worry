@@ -1,15 +1,13 @@
 package mackerel.dontworry.budgetguide.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-//@Setter
-//@Builder
-@AllArgsConstructor
+@Setter
 @NoArgsConstructor
-public class EveryPercentRequestDTO {
+public class BudgetDTO {
     private String username;
-    private int saveamount;
+    private int budget;
 }

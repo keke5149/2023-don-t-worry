@@ -7,8 +7,7 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
-@Table(name = "ACCOUNT")
-@Builder
+@Table(name = "REPEATS")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Repeat {
@@ -22,7 +21,9 @@ public class Repeat {
     private AccountBook accountBook;
 
     private LocalDate repeatDate;
+    @Transient
     private int cycleNum;
+    @Transient
     private String cyclePeriod;
 
     @Builder
