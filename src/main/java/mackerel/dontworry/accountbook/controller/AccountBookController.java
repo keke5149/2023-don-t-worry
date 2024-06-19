@@ -19,7 +19,6 @@ public class AccountBookController {
 
     @PostMapping("")
     public ResponseEntity<?> createAccountRecord(@RequestBody ABRequestDTO requestDTO) throws Exception{
-        System.out.println("들어오니?");
         if (SecurityContextHolder.getContext().getAuthentication() instanceof OAuth2AuthenticationToken) {
             OAuth2AuthenticationToken authentication = (OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
             String email = authentication.getPrincipal().getAttributes().get("email").toString();

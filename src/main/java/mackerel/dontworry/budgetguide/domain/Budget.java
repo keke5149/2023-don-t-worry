@@ -26,9 +26,9 @@ public class Budget {
     @JoinColumn(name="user_id")
     private User user;
 
-    private int budget;
+    private Long budget;
 
-    public Budget(LocalDate budgetDate, User user, int budget) {
+    public Budget(LocalDate budgetDate, User user, Long budget) {
         this.budgetDate = budgetDate;
         this.user = user;
         this.budget = budget;

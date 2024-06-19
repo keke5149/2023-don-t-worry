@@ -3,6 +3,7 @@ package mackerel.dontworry.home.service;
 import lombok.RequiredArgsConstructor;
 import mackerel.dontworry.accountbook.domain.AccountBook;
 import mackerel.dontworry.accountbook.repository.AccountBookRepository;
+import mackerel.dontworry.global.dto.BudgetUsageDTO;
 import mackerel.dontworry.global.service.CommonService;
 import mackerel.dontworry.home.dto.InexInfo;
 import mackerel.dontworry.home.dto.MainInfo;
@@ -15,6 +16,7 @@ import mackerel.dontworry.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +47,8 @@ public class MainService {
         List<ScheduleInfo> scheduleInfos = new ArrayList<>();
         List<InexInfo> inexInfos = new ArrayList<>();
 
-        Double currentBudgetUsagePercent = commonService.readCurrentBudgetUsage(user) * 100;
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        BudgetUsageDTO currentUsage = commonService.readCurrentBudgetUsage(user);
 
         List<Schedule> schedules = scheduleRepository.findAllByUser(user);
         List<AccountBook> accountBooks = accountBookRepository.findAllByUser(user);
@@ -59,12 +62,12 @@ public class MainService {
         if (!accountBooks.isEmpty()) {
             for (AccountBook account : accountBooks) {
                 System.out.println(account.getAccountId());
-                InexInfo info = new InexInfo(account.getAccountId(), account.getCategory(), account.getInex(), account.getTitle(), account.getCost());
+                InexInfo info = new InexInfo(account.getAccountId(), account.getCategory(), account.getInex(), account.getTitle(), account.getCost(), account.getCreatedAt());
                 inexInfos.add(info);
             }
         }
 
-        result.setCurrentBudgetUsagePercent(currentBudgetUsagePercent);
+        result.setBudgetUsageDTO(currentUsage);
         result.setSchedules(scheduleInfos);
         result.setInexs(inexInfos);
         return result;

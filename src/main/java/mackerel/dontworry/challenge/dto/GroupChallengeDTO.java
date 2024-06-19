@@ -1,7 +1,6 @@
 package mackerel.dontworry.challenge.dto;
 
 import lombok.*;
-import mackerel.dontworry.challenge.domain.Challenge;
 
 import java.time.LocalDate;
 import java.util.List;

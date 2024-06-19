@@ -49,8 +49,9 @@ public class BudgetGuideService {
     public ResponseEntity<?> saveFixedCategory(FixedExDTO requestDTO) throws Exception{
         User user = userRepository.findByEmail(requestDTO.getUsername())
                 .orElseThrow(() -> new NotFoundMemberException("사용자를 찾을 수 없습니다: " + requestDTO.getUsername()));
-        String FixedList = requestDTO.getFixedEXsAsString();
-        fixedEXRepository.save(new FixedEX(user, FixedList));
+        String fixedList = requestDTO.getFixedEXsAsString();
+        System.out.println("fixedlist: " + fixedList);
+        fixedEXRepository.save(new FixedEX(user, fixedList));
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -163,8 +164,12 @@ public class BudgetGuideService {
         LocalDate current = LocalDate.now();
 
         int ratio_type;
-        if(requestDTO.getVariableBudgetResponseDTOS() != null && requestDTO.getCurrentVariableTotal() != null) ratio_type = 1; // account book
-        else ratio_type = 2; //schedule
+        if(requestDTO.getVariableBudgetResponseDTOS() != null && requestDTO.getCurrentVariableTotal() != null) {
+            ratio_type = 1; // account book
+        }
+        else {
+            ratio_type = 2; //schedule
+        }
 
         ASRatio currentASRatio = ASRatioRepository.findEntityByUserAndDate(current.withDayOfMonth(1), current.withDayOfMonth(current.lengthOfMonth()), user.getUserId(), ratio_type);
         if (currentASRatio != null) {//first: "FOOD,40" second: "TRANSPORTATION,30"
@@ -246,7 +251,8 @@ public class BudgetGuideService {
 //                user.getUserId(), lastMonth.withDayOfMonth(1), lastMonth.withDayOfMonth(lastMonth.lengthOfMonth()));
 
         List<ScheduleBudgetResponseDTO> scheduleCategoryCostList = allocateScheduleBudgetCore(current, currentScheduleBudget, lastScheduleExpenseTotal, user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleCategoryCostList);
+        ScheduleAllocationResponseDTO scheduleAllocationResponseDTO = new ScheduleAllocationResponseDTO(currentScheduleBudget.longValue(), scheduleCategoryCostList);
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleCategoryCostList);
     }
 
     @Transactional
@@ -258,9 +264,9 @@ public class BudgetGuideService {
         if(result != null && result.get(0).length == 4){//first: FOOD,40 second: TRANSPORTATION,30
             String[] resultArray = result.get(0);
             for (int i = 0; i < 4; i++) {
-                String[] value = resultArray[i].toString().split(",");//0:FOOD 1:40(%)
+                String[] value = resultArray[i].split(",");//0:FOOD 1:40(%)
                 ScheduleBudgetResponseDTO scheduleBudget = new ScheduleBudgetResponseDTO(
-                        ScheduleCategory.valueOf(value[0]), (Double)(currentScheduleBudget*(Double.parseDouble(value[1])/100)), Integer.parseInt((String) value[1]));
+                        ScheduleCategory.valueOf(value[0]), currentScheduleBudget*(Double.parseDouble(value[1])/100), Integer.parseInt(value[1]));
                 scheduleCategoryCostList.add(scheduleBudget);
             }
         } else {
@@ -278,7 +284,7 @@ public class BudgetGuideService {
             //이번달 일정 카테고리별 예산 할당
             for (int i = 0; i < 4; i++) {
                 String[] value = fstf1234[i].split(",");//0:FOOD 1:40(%)
-                ScheduleBudgetResponseDTO scheduleBudget2 = new ScheduleBudgetResponseDTO(ScheduleCategory.valueOf(value[0]), (Double) (currentScheduleBudget * (Double.parseDouble(value[1]) / 100)), Integer.parseInt(value[1]));
+                ScheduleBudgetResponseDTO scheduleBudget2 = new ScheduleBudgetResponseDTO(ScheduleCategory.valueOf(value[0]), currentScheduleBudget * (Double.parseDouble(value[1]) / 100), Integer.parseInt(value[1]));
                 scheduleCategoryCostList.add(scheduleBudget2);
             }
         }

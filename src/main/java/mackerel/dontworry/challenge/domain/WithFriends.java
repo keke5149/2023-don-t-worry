@@ -6,7 +6,6 @@ import mackerel.dontworry.user.domain.User;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,7 +14,7 @@ import java.util.Set;
 @Table(name = "CHALLENGE")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Challenge {
+public class WithFriends {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +41,7 @@ public class Challenge {
     )
     private Set<User> participants = new HashSet<>();
 
-    public Challenge(String title, LocalDate startDate, LocalDate endDate, Long goalAmount) {
+    public WithFriends(String title, LocalDate startDate, LocalDate endDate, Long goalAmount) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -55,11 +54,12 @@ public class Challenge {
     }
     public void addParticipant(User user) {
         participants.add(user);
-        user.getChallenges().add(this);
+        user.getWithFriends().add(this);
     }
 
     public void removeParticipant(User user) {
         participants.remove(user);
-        user.getChallenges().remove(this);
+        user.getWithFriends().remove(this);
     }
+
 }

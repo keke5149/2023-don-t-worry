@@ -3,9 +3,17 @@ package mackerel.dontworry.challenge.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mackerel.dontworry.accountbook.repository.AccountBookRepository;
-import mackerel.dontworry.challenge.domain.Challenge;
+import mackerel.dontworry.challenge.domain.WithFriends;
+import mackerel.dontworry.challenge.domain.DailySpending;
+import mackerel.dontworry.challenge.domain.MoneyCollector;
+import mackerel.dontworry.challenge.dto.CategoryGoalTrackerDTO;
+import mackerel.dontworry.challenge.dto.DailySpendingDTO;
 import mackerel.dontworry.challenge.dto.GroupChallengeDTO;
+import mackerel.dontworry.challenge.dto.MoneyCollectorDTO;
+import mackerel.dontworry.challenge.repository.CategoryGoalTrackerRepository;
 import mackerel.dontworry.challenge.repository.ChallengeRepository;
+import mackerel.dontworry.challenge.repository.DailySpendingRepository;
+import mackerel.dontworry.challenge.repository.MoneyCollectorRepository;
 import mackerel.dontworry.user.domain.User;
 import mackerel.dontworry.user.exception.NotFoundMemberException;
 import mackerel.dontworry.user.repository.UserRepository;
@@ -22,6 +30,9 @@ public class ChallengeService {
     private final UserRepository userRepository;
     private final AccountBookRepository accountBookRepository;
     private final ChallengeRepository challengeRepository;
+    private final MoneyCollectorRepository moneyCollectorRepository;
+    private final DailySpendingRepository dailySpendingRepository;
+    private final CategoryGoalTrackerRepository categoryGoalTrackerRepository;
 
     //친구들 예산 사용량
     @Transactional
@@ -45,17 +56,33 @@ public class ChallengeService {
     }
 
     @Transactional
-    public Challenge createGroupChallenge(GroupChallengeDTO requestDTO){
+    public WithFriends createGroupChallenge(GroupChallengeDTO requestDTO){
 
-        // 3. 챌린지 생성 및 저장
-        Challenge challenge = new Challenge(requestDTO.getTitle(), requestDTO.getStartDate(), requestDTO.getEndDate(), requestDTO.getGoalAmount());
+        WithFriends withFriends = new WithFriends(requestDTO.getTitle(), requestDTO.getStartDate(), requestDTO.getEndDate(), requestDTO.getGoalAmount());
         List<User> participants = userRepository.findByEmailIn(requestDTO.getFriendEmails());
         Set<User> participantsSet = new HashSet<>(participants);
 
-        challenge.setParticipants(participantsSet); // 현재 사용자를 포함한 친구들을 참여자로 설정
-        challengeRepository.save(challenge);
-
-        return challenge;
+        withFriends.setParticipants(participantsSet); // 현재 사용자를 포함한 친구들을 참여자로 설정
+        challengeRepository.save(withFriends);
+        return withFriends;
     }
 
+    @Transactional
+    public MoneyCollector createMoneyCollectorChallenge(MoneyCollectorDTO challengeDTO) {
+        MoneyCollector challenge = new MoneyCollector(challengeDTO.getPeriod(), challengeDTO.getTotalMoney());
+        return moneyCollectorRepository.save(challenge);
+    }
+
+    @Transactional
+    public String checkDailySpending(DailySpendingDTO dailySpendingDTO) {
+        List<DailySpending> accounts = dailySpendingRepository.findByDate(dailySpendingDTO.getDate());
+        double totalSpent = accounts.stream().mapToDouble(DailySpending::getAmount).sum();
+        return totalSpent <= dailySpendingDTO.getTargetAmount() ? "Success" : "Failure";
+    }
+
+    @Transactional
+    public String checkCategoryGoal(CategoryGoalTrackerDTO categoryGoalCategoryGoalTrackerDto) {
+        long usageCount = categoryGoalTrackerRepository.countByCategoryId(categoryGoalCategoryGoalTrackerDto.getCategory());
+        return usageCount <= categoryGoalCategoryGoalTrackerDto.getTimes() ? "Success" : "Failure";
+    }
 }

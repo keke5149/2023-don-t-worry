@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import mackerel.dontworry.accountbook.domain.AccountBook;
 import mackerel.dontworry.budgetguide.domain.FixedEX;
-import mackerel.dontworry.challenge.domain.Challenge;
-import mackerel.dontworry.schedule.domain.Schedule;
+import mackerel.dontworry.challenge.domain.WithFriends;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -55,7 +54,7 @@ public class User {
     private Set<User> friends = new HashSet<>();
 
     @ManyToMany(mappedBy = "participants")
-    private Set<Challenge> challenges = new HashSet<>();
+    private Set<WithFriends> withFriends = new HashSet<>();
 
 
     @Builder(access = AccessLevel.PRIVATE)

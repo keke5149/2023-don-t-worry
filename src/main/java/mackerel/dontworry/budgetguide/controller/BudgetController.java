@@ -25,7 +25,7 @@ public class BudgetController {
     }
 
     //한달 예산도 fixed 선택할 때 입력하는가? -> 매달 한달 예산을 입력할 때마다 fixed를 선택해야 하는지지
-    @PostMapping("/fixed-categories")
+    @PatchMapping("/fixed-categories")
     public ResponseEntity<?> saveFixedCategory(@RequestBody FixedExDTO requestDTO) throws Exception{
         String email = getEmailFromAuthentication();
         if(email != null){
@@ -49,7 +49,7 @@ public class BudgetController {
         return budgetGuideService.allocateScheduleBudget(email);
     }
 
-    @PatchMapping(value = {"/accountbook/categories", "/schedule/categories"})
+    @PatchMapping(value = {"/accountbook/category-ratio", "/schedules/category-ratio"})
     public ResponseEntity<?> updateCategoryRatio(@RequestBody CategoryRatioUpdateRequestDTO requestDTO) throws Exception{
         String email = getEmailFromAuthentication();
         if(email != null){

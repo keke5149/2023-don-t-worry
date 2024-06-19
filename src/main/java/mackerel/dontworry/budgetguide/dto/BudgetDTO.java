@@ -9,5 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BudgetDTO {
     private String username;
-    private int budget;
+    private Long budget;
 }

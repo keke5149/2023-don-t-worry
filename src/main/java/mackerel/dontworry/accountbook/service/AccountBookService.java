@@ -46,7 +46,7 @@ public class AccountBookService {
                 .orElseThrow(() -> new NotFoundMemberException("사용자를 찾을 수 없습니다: " + requestDTO.getUsername()));
         accountBook.setUser(user);
 
-        if(requestDTO.getSchedule() != null){
+        if(requestDTO.getSchedule() != 0){
             Schedule schedule = scheduleRepository.findById(requestDTO.getSchedule())
                     .orElseThrow(() -> new NotFoundContentException("일정을 찾을 수 없습니다: " + requestDTO.getSchedule()));
             accountBook.setSchedule(schedule);
