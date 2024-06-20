@@ -22,12 +22,12 @@
 git clone http://github.com/2023_DontWorry
 cd 2023_DontWorry/src
 ```
-<br>
-&nbsp;&nbsp;-빌드<br><br>
+<br><br>
+&nbsp;&nbsp;-프로젝트 빌드<br><br>
 ```
 ./gradlew build
 ```
-<br>
+<br><br>
 &nbsp;&nbsp;-실행<br><br>
 ```
 ./gradlew bootRun
