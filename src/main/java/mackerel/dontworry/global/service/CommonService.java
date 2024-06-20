@@ -23,7 +23,7 @@ public class CommonService {
     public BudgetUsageDTO readCurrentBudgetUsage(User user){
         LocalDateTime currentDateTime = LocalDateTime.now();
         LocalDate currentDate = currentDateTime.toLocalDate();
-        Long getCurrentUsage = accountBookRepository.findTotalCostByUserAndDateRange(user, currentDateTime.withDayOfMonth(1), currentDateTime);
+        Long getCurrentUsage = accountBookRepository.findTotalCostByUserAndDateRange(user.getUserId(), currentDateTime.withDayOfMonth(1), currentDateTime);
         Long currentTotalBudget = budgetRepository.findByDateAndUser(currentDate.withDayOfMonth(1), currentDate.withDayOfMonth(currentDate.lengthOfMonth()), user.getUserId());
 
         int percent;

@@ -224,7 +224,7 @@ public class BudgetGuideService {
 
 
     @Transactional
-    public ResponseEntity<?> allocateScheduleBudget(String email) throws Exception{
+    public ScheduleAllocationResponseDTO allocateScheduleBudget(String email) throws Exception{
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundMemberException("사용자를 찾을 수 없습니다: " + email));
         LocalDate current = LocalDate.now();
@@ -234,15 +234,28 @@ public class BudgetGuideService {
         Long currentBudget = budgetRepository.findByDateAndUser(
                 current.withDayOfMonth(1), current.withDayOfMonth(current.lengthOfMonth()), user.getUserId());
         if(currentBudget == null)
-            return ResponseEntity.ok().build();
+            return new ScheduleAllocationResponseDTO();
 
         //이전 달 정보: 이전 달 / 이전 달 예산 / 이전 달 카테고리별 금액 총합(카테고리명-금액 합)
         LocalDate lastMonth = current.minusMonths(1);
-        Long lastBudget = budgetRepository.findByDateAndUser(
-                lastMonth.withDayOfMonth(1), lastMonth.withDayOfMonth(lastMonth.lengthOfMonth()), user.getUserId());
-        Long lastScheduleExpenseTotal = scheduleRepository.findTotalExpenseByUserAndDate(user, lastMonth.withDayOfMonth(1), lastMonth.withDayOfMonth(lastMonth.lengthOfMonth()));
-
-        Double scheduleRatioPerTotal = Double.valueOf(lastScheduleExpenseTotal / lastBudget);
+        Long lastBudget;
+        Long lastScheduleExpenseTotal;
+        Double scheduleRatioPerTotal;
+        if(budgetRepository.findByDateAndUser(lastMonth.withDayOfMonth(1), lastMonth.withDayOfMonth(lastMonth.lengthOfMonth()), user.getUserId()) != null){
+            lastBudget = budgetRepository.findByDateAndUser(lastMonth.withDayOfMonth(1), lastMonth.withDayOfMonth(lastMonth.lengthOfMonth()), user.getUserId());
+        } else{
+            lastBudget = 0L;
+        }
+        if(scheduleRepository.findTotalExpenseByUserAndDate(user, lastMonth.withDayOfMonth(1), lastMonth.withDayOfMonth(lastMonth.lengthOfMonth())) != null){
+            lastScheduleExpenseTotal = scheduleRepository.findTotalExpenseByUserAndDate(user, lastMonth.withDayOfMonth(1), lastMonth.withDayOfMonth(lastMonth.lengthOfMonth()));
+            scheduleRatioPerTotal = Double.valueOf(lastScheduleExpenseTotal / lastBudget);
+        } else{
+            lastScheduleExpenseTotal = 0L;
+            scheduleRatioPerTotal = 0.0;
+            List<ScheduleBudgetResponseDTO> scheduleCategoryCostList = new ArrayList<>(0);
+            ScheduleAllocationResponseDTO scheduleAllocationResponseDTO = new ScheduleAllocationResponseDTO(0L, scheduleCategoryCostList);
+            return scheduleAllocationResponseDTO;
+        }
 
         //일정 예산 할당에 사용할 이번달 일정 예산
         Double currentScheduleBudget = currentBudget * scheduleRatioPerTotal;
@@ -252,7 +265,7 @@ public class BudgetGuideService {
 
         List<ScheduleBudgetResponseDTO> scheduleCategoryCostList = allocateScheduleBudgetCore(current, currentScheduleBudget, lastScheduleExpenseTotal, user);
         ScheduleAllocationResponseDTO scheduleAllocationResponseDTO = new ScheduleAllocationResponseDTO(currentScheduleBudget.longValue(), scheduleCategoryCostList);
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleCategoryCostList);
+        return scheduleAllocationResponseDTO;
     }
 
     @Transactional

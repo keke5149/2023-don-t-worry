@@ -1,8 +1,6 @@
 package mackerel.dontworry.home.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import mackerel.dontworry.schedule.domain.ScheduleCategory;
 
 import java.time.LocalDate;
@@ -10,6 +8,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @AllArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ScheduleInfo {
 
     private Long scheduleId;
@@ -19,6 +18,15 @@ public class ScheduleInfo {
     private Long expense;
     private LocalDate scheduleDate;
 
-    //예측값
-    //추천값
+    private Long expectedCost;
+    private Double recommendedCost;
+
+    public ScheduleInfo(Long scheduleId, ScheduleCategory category, String title, Long income, Long expense, LocalDate scheduleDate) {
+        this.scheduleId = scheduleId;
+        this.category = category;
+        this.title = title;
+        this.income = income;
+        this.expense = expense;
+        this.scheduleDate = scheduleDate;
+    }
 }

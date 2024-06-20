@@ -46,7 +46,7 @@ public class BudgetController {
     @GetMapping("/schedules") // 유동지출-고정지출-절약
     public ResponseEntity<?> readScheduleBudget() throws Exception{
         String email = getEmailFromAuthentication();
-        return budgetGuideService.allocateScheduleBudget(email);
+        return ResponseEntity.status(HttpStatus.OK).body(budgetGuideService.allocateScheduleBudget(email));
     }
 
     @PatchMapping(value = {"/accountbook/category-ratio", "/schedules/category-ratio"})

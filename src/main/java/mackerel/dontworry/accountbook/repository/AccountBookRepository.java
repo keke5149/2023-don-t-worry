@@ -33,9 +33,9 @@ public interface AccountBookRepository extends JpaRepository<AccountBook, Long> 
                                                      @Param("endDate") LocalDateTime endDate,
                                                      @Param("user") Long user_id);
 
-    @Query("SELECT SUM(a.cost) FROM AccountBook a " +
-            "WHERE a.user = :user AND a.createdAt BETWEEN :startDate AND :endDate")
-    Long findTotalCostByUserAndDateRange(@Param("user") User user, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+    @Query(value = "SELECT SUM(cost) FROM account " +
+            "WHERE user_id = :user AND inex = 'EXPENSE' AND created_at BETWEEN :startDate AND :endDate", nativeQuery = true)
+    Long findTotalCostByUserAndDateRange(@Param("user") Long user_id, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     @Query("SELECT u.email, SUM(a.cost) FROM AccountBook a " +
             "JOIN a.user u " +
